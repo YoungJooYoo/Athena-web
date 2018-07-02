@@ -8,11 +8,6 @@
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 {% endblock %}
 
-{% block styles %}
-{{super()}}
-    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
-{% endblock %}
-
 {% block navbar %}
 <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
@@ -23,16 +18,20 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">Athena</a>
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">Athena</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/">Download</a></li>
                 <li><a href="/">About</a></li>
-               </ul>
+                <li><a href="/">Download</a></li>
+            </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/">QnA</a></li>
-                <li><a href="/">Login</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+                {% else %}
+                <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -41,6 +40,13 @@
 
 {% block content %}
 <div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
     {% block page_content %}{% endblock %}
 </div>
 {% endblock %}
@@ -49,4 +55,3 @@
 {{ super() }}
 {{ moment.include_moment() }}
 {% endblock %}
-
